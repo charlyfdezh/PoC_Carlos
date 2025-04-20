@@ -1,0 +1,8 @@
+table_name,field_name,field_type,key,nullable,date_format,number_format,string_format,load_type,partition,description
+financial,CustomerID,Integer,K1,false,,integer,,total,,Customer id associated
+financial,DNI,String,K1,false,,,8D1L,total,,DNI
+financial,AccountBalance,Integer,,false,,,,total,,Balance in the account
+financial,CreditScore,Integer,,false,,integer(3),,total,,Credit personal score
+financial,LoanAmount,Integer,,true,,integer,,total,,Loan amount requested
+financial,LoanStatus,String,,true,,,Approved/Rejected,total,,Loan status associated
+financial,AccountType,String,,false,,integer,Savings/Checking,total,,Account type associated

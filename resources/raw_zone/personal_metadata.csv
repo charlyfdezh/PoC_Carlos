@@ -1,0 +1,10 @@
+table_name,field_name,field_type,key,nullable,date_format,number_format,string_format,load_type,partition,description
+personal,CustomerID,Integer,K1K2,false,,integer,,total,,Customer id associated
+personal,FirstName,String,K1,false,,,,total,,First name associated
+personal,LastName,String,K2,false,,,,total,,Last name associated
+personal,Gender,String,,true,,,,total,,Gender
+personal,Age,Integer,,false,,integer,,total,,Age of the person
+personal,Email,String,,false,,,@,total,,Email associated
+personal,Phone,Integer,,true,,integer(9),,total,,Phone number associated
+personal,BirthDate,Date,,true,YYYY-MM-DD,,,total,year,Birth date
+personal,DNI,String,K1K2,false,,,8D1L,total,,DNI associated
