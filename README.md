@@ -38,25 +38,25 @@ The project is organized as follows:
 
 ```
 poc-nn-carlos/
-| src
-│ ├── data_validation/
-  │ ├── validator.py # Data validation logic
-│ ├── utils/
-  │ ├── reader_writer_config.py # File reading and writing utilities
-│ ├── resources/
-  │ ├── raw_zone/ # Raw input data
-  │ └── datahub/ # Processed output data
-  | model/
-  | ├── financial_schema.csv # Financial data
-  | └── personal_schema.csv # Personal data
-│ test/
-  │ ├── validator_test.py # Unit tests for data validation
-  │ └── contoso_test.py # Integration tests for the main process
+├── src/
+│  ├── data_validation/
+|  │ └── validator.py # Data validation logic
+│  ├── utils/
+|  │ └── reader_writer_config.py # File reading and writing utilities
+│  ├── resources/
+|  │ ├── raw_zone/ # Raw input data
+|  │ └── datahub/ # Processed output data
+|  | model/
+|  | ├── financial_schema.csv # Financial data
+|  | └── personal_schema.csv # Personal data
+├── test/
+|  │ ├── validator_test.py # Unit tests for data validation
+|  │ └── contoso_test.py # Integration tests for the main process
 ├── contoso_poc.py # Main ETL process
 ├── README.md # Project documentation
 ├── CHANGELOG.md # Change log
 ├── requirements.txt # Project dependencies
-├── .gitignore # Git ignore file
+└── .gitignore # Git ignore file
 ```
 ---
 
