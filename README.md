@@ -36,6 +36,7 @@ The Contoso PoC project processes financial and personal data to demonstrate the
 
 The project is organized as follows:
 
+```
 poc-nn-carlos/
 | src
 │ ├── data_validation/
@@ -56,7 +57,7 @@ poc-nn-carlos/
 ├── CHANGELOG.md # Change log
 ├── requirements.txt # Project dependencies
 ├── .gitignore # Git ignore file
-
+```
 ---
 
 ## Process Workflow
