@@ -7,8 +7,8 @@ import os
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import col, count
 from pyspark.sql.types import IntegerType, StringType, DoubleType
-from utils.reader_writer_config import Reader
-from utils.logger_config import LoggerConfig
+from src.utils.reader_writer_config import Reader
+from src.utils.logger_config import LoggerConfig
 
 logger = LoggerConfig.configure_logger(log_file_path="application.log",
                                        log_level=logging.INFO)

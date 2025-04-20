@@ -4,7 +4,7 @@ Unit test for the DataValidator class.
 import pytest
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType
-from data_validation.validator import DataValidator
+from src.data_validation.validator import DataValidator
 
 
 @pytest.fixture(scope="session")

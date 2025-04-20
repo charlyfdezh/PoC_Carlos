@@ -4,24 +4,21 @@ Contoso PoC for Nationale-Nederlanden with pyspark and Delta Lake
 import os
 import logging
 import sys
-import pyspark 
-import findspark
-from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import asc, desc
 # from azure.identity import DefaultAzureCredential
 # from azure.keyvault.secrets import SecretClient
-from utils.logger_config import LoggerConfig
-from utils.reader_writer_config import Reader, Writer
-from data_validation.validator import DataValidator
-from model.financial_schema import FinancialSchema as F
-from model.personal_schema import PersonalSchema as P
+from src.utils.logger_config import LoggerConfig
+from src.utils.reader_writer_config import Reader, Writer
+from src.data_validation.validator import DataValidator
+from src.model.financial_schema import FinancialSchema as F
+from src.model.personal_schema import PersonalSchema as P
 
 logger = LoggerConfig.configure_logger(log_file_path="application.log",
                                        log_level=logging.INFO)
 
 BASE_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "resources"))
+    os.path.join(os.path.dirname(__file__), "src/resources"))
 RAW_ZONE_PATH = os.path.join(BASE_PATH, "raw_zone")
 DATAHUB_ZONE_PATH = os.path.join(BASE_PATH, "datahub_zone")
 financial_path = os.path.join(RAW_ZONE_PATH, "financial_data.csv")
@@ -53,12 +50,12 @@ def main():
              .config("spark.driver.memory", "2g")
              .config("spark.hadoop.hadoop.native.lib", "false")
              .getOrCreate())
-    
+
     #  .config("spark.sql.extensions",
     #          "io.delta.sql.DeltaSparkSessionExtension")
     #  .config("spark.sql.catalog.spark_catalog",
     #          "org.apache.spark.sql.delta.catalog.DeltaCatalog")
-    
+
     logger.info("Reading financial data.")
     financial_df = Reader.read_file(spark,
                                     financial_path,
@@ -100,4 +97,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

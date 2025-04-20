@@ -6,7 +6,7 @@ import logging
 import os
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import StructType
-from utils.logger_config import LoggerConfig
+from src.utils.logger_config import LoggerConfig
 
 logger = LoggerConfig.configure_logger(log_file_path="application.log",
                                        log_level=logging.INFO)
