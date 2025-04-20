@@ -36,7 +36,20 @@ The Contoso PoC project processes financial and personal data to demonstrate the
 
 The project is organized as follows:
 
-poc-nn-carlos/ │ ├── data_validation/ │ ├── validator.py # Data validation logic │ ├── utils/ │ ├── reader_writer_config.py # File reading and writing utilities │ ├── test/ │ ├── validator_test.py # Unit tests for data validation │ ├── contoso_test.py # Integration tests for the main process │ ├── resources/ │ ├── raw_zone/ # Raw input data │ ├── datahub/ # Processed output data │ ├── contoso_poc.py # Main ETL process ├── README.md # Project documentation ├── CHANGELOG.md # Change log
+poc-nn-carlos/
+│ ├── data_validation/
+  │ ├── validator.py # Data validation logic
+│ ├── utils/
+  │ ├── reader_writer_config.py # File reading and writing utilities
+│ ├── test/
+  │ ├── validator_test.py # Unit tests for data validation
+  │ ├── contoso_test.py # Integration tests for the main process
+│ ├── resources/
+  │ ├── raw_zone/ # Raw input data
+  │ ├── datahub/ # Processed output data
+├── contoso_poc.py # Main ETL process
+├── README.md # Project documentation
+├── CHANGELOG.md # Change log
 
 ---
 
@@ -84,9 +97,18 @@ poc-nn-carlos/ │ ├── data_validation/ │ ├── validator.py # Data 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/poc-nn-carlos.git
-   cd poc-nn-carlos
+   git clone https://github.com/charlyfdezh/PoC_Carlos.git
+
+2. Navigate to the project directory:
+   ```bash
+   cd PoC_Carlos
+
+3. Install the project dependencies:   
+   ```bash
    pip install -r requirements.txt
+
+4. Run the project:
+   ```bash
    python contoso_poc.py
 
 
