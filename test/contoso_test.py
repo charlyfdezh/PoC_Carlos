@@ -3,9 +3,9 @@ Unit and integration tests for Contoso PoC project.
 """
 import os
 import pytest
-from src.utils.reader_writer_config import Reader
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+from src.utils.reader_writer_config import Reader
 from contoso_poc import main, RAW_ZONE_PATH, DATAHUB_ZONE_PATH
 
 

@@ -1,12 +1,11 @@
 """
 Unit test for the DataValidator class.
 """
-import pytest
 import os
-from src.utils.reader_writer_config import Writer
-from contoso_poc import RAW_ZONE_PATH
+import pytest
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+from contoso_poc import RAW_ZONE_PATH
 from src.data_validation.validator import DataValidator
 
 
@@ -24,7 +23,6 @@ def spark():
 
 
 @pytest.fixture(scope="function", params=[
-    # Case 1: Valid data
     (
         [
             (123, "John Doe", 30),
@@ -67,10 +65,7 @@ def test_validate_data_types(sample_data):
     Unit test for validating data types.
     """
     df, metadata_df, expected_valid_rows, expected_errors = sample_data
-    # print(f"DataFrame: {df.show()}")
-    # print(f"Metadata DataFrame: {metadata_df.show()}")
-    # print(f"Expected Valid Rows: {expected_valid_rows}")
-    # print(f"Expected Errors: {expected_errors}")
+
     valid_data, errors = DataValidator.validate_data_types(df, metadata_df)
 
     assert valid_data.count() == expected_valid_rows

@@ -94,7 +94,7 @@ class Reader:
         :param spark: SparkSession instance.
         :param input_path: Input file path.
         :param file_format: File format (parquet, csv, json, etc.).
-        :param options: Additional options for reading 
+        :param options: Additional options for reading
                         (e.g., header=True for CSV).
         :param schema: Optional schema to enforce when reading the file.
         :return: PySpark DataFrame.
