@@ -3,7 +3,6 @@ Contoso PoC for Nationale-Nederlanden with pyspark and Delta Lake
 """
 import os
 import logging
-import sys
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import asc, desc
 # from azure.identity import DefaultAzureCredential
@@ -90,9 +89,6 @@ def main():
     Writer.write_file(spark, combined_df, output_path)
 
     logger.info("Contoso PoC completed successfully.")
-
-    spark.stop()
-    sys.exit(0)
 
 
 if __name__ == "__main__":

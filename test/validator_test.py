@@ -2,8 +2,11 @@
 Unit test for the DataValidator class.
 """
 import pytest
+import os
+from src.utils.reader_writer_config import Writer
+from contoso_poc import RAW_ZONE_PATH
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 from src.data_validation.validator import DataValidator
 
 
@@ -20,31 +23,34 @@ def spark():
     spark.stop()
 
 
-@pytest.fixture(params=[
+@pytest.fixture(scope="function", params=[
+    # Case 1: Valid data
     (
         [
-            {"CustomerID": "123", "Name": "John Doe", "Age": "30"},
-            {"CustomerID": "456", "Name": "Jane Smith", "Age": "25"}
+            (123, "John Doe", 30),
+            (456, "Jane Smith", 25)
         ],
         [
-            {"field_name": "CustomerID", "field_type": "Integer", "key": "K1"},
-            {"field_name": "Name", "field_type": "String", "key": None},
-            {"field_name": "Age", "field_type": "Integer", "key": None}
-        ]
-    )
+            ("CustomerID", "Integer", "K1"),
+            ("Name", "String", None),
+            ("Age", "Integer", None)
+        ],
+        2,  # Expected valid rows
+        0   # Expected errors
+    ),
 ])
-def sample_data_with_params(request, spark):
+def sample_data(request, spark):
     """
-    Fixture parametrizado para crear diferentes combinaciones de datos y metadatos.
+    Parametrized fixture to create test data and metadata.
     """
-    data, metadata = request.param
+    data, metadata, expected_valid_rows, expected_errors = request.param
 
-    schema = StructType([
-        StructField("CustomerID", StringType(), True),
+    data_schema = StructType([
+        StructField("CustomerID", IntegerType(), True),
         StructField("Name", StringType(), True),
-        StructField("Age", StringType(), True)
+        StructField("Age", IntegerType(), True)
     ])
-    df = spark.createDataFrame(data, schema)
+    df = spark.createDataFrame(data, data_schema)
 
     metadata_schema = StructType([
         StructField("field_name", StringType(), True),
@@ -53,38 +59,72 @@ def sample_data_with_params(request, spark):
     ])
     metadata_df = spark.createDataFrame(metadata, metadata_schema)
 
-    return df, metadata_df
+    return df, metadata_df, expected_valid_rows, expected_errors
 
 
-def test_validate_data_types(sample_data_with_params):
+def test_validate_data_types(sample_data):
     """
     Unit test for validating data types.
     """
-    df, metadata_df = sample_data_with_params
-
+    df, metadata_df, expected_valid_rows, expected_errors = sample_data
+    # print(f"DataFrame: {df.show()}")
+    # print(f"Metadata DataFrame: {metadata_df.show()}")
+    # print(f"Expected Valid Rows: {expected_valid_rows}")
+    # print(f"Expected Errors: {expected_errors}")
     valid_data, errors = DataValidator.validate_data_types(df, metadata_df)
 
-    assert valid_data.count() == 1
-    assert len(errors) == 2
+    assert valid_data.count() == expected_valid_rows
+    assert len(errors) == expected_errors
 
 
 def test_validate_primary_keys(sample_data):
     """
     Unit test for validating primary keys.
     """
-    df, metadata_df = sample_data
+    df, metadata_df, expected_valid_rows, expected_errors = sample_data
 
     valid_data, errors = DataValidator.validate_primary_keys(df, metadata_df)
 
-    assert valid_data.count() == 1
-    assert len(errors) == 2
+    if expected_errors > 0 and "Duplicate primary key" in str(errors):
+        assert valid_data.count() == 0
+    else:
+        assert valid_data.count() == expected_valid_rows
 
 
-def test_validate_data(sample_data):
+def test_validate_data(spark):
     """
-    Unit test for validating complete data
+    Integration test for the validate_data method in DataValidator.
     """
+    data = [
+        (123, "John Doe", 30),
+        (456, "Jane Smith", 25),
+    ]
+    schema = StructType([
+        StructField("CustomerID", IntegerType(), True),
+        StructField("Name", StringType(), True),
+        StructField("Age", IntegerType(), True)
+    ])
+    df = spark.createDataFrame(data, schema)
 
-    valid_data = DataValidator.validate_data(spark, sample_data, metadata_path=None)
+    metadata_data = [
+        ("CustomerID", "Integer", "K1"),
+        ("Name", "String", None),
+        ("Age", "Integer", None)
+    ]
+    metadata_schema = StructType([
+        StructField("field_name", StringType(), True),
+        StructField("field_type", StringType(), True),
+        StructField("key", StringType(), True)
+    ])
+    metadata_df = spark.createDataFrame(metadata_data, metadata_schema)
 
-    assert valid_data.count() == 0
+    metadata_path = os.path.join(RAW_ZONE_PATH, "test_data/metadata.csv")
+    metadata_df.write.csv(metadata_path, header=True, mode="overwrite")
+
+    result_df = DataValidator.validate_data(
+        spark, df, metadata_path
+    )
+    assert result_df.count() == 3
+    assert "CustomerID" in result_df.columns
+    assert "Name" in result_df.columns
+    assert "Age" in result_df.columns

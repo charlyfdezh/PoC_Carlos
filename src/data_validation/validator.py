@@ -29,37 +29,48 @@ class DataValidator:
         """
         Validates the data types of a DataFrame using the metadata DataFrame.
     
-        :param spark: SparkSession instance.
         :param df: DataFrame to validate.
         :param metadata_df: DataFrame containing metadata information.
         :return: A tuple containing the DataFrame with valid data types
         and a list of errors.
         """
-  
-        metadata_df = metadata_df.selectExpr("trim(field_name) as field_name", "trim(field_type) as field_type")
-    
+        metadata_df = metadata_df.selectExpr(
+            "trim(field_name) as field_name", "trim(field_type) as field_type")
         type_mapping = {"Integer": IntegerType(),
                         "String": StringType(),
                         "Double": DoubleType()}
-    
         error_list = []
+
         for row in metadata_df.collect():
             field_name, field_type = row["field_name"], row["field_type"]
             expected_type = type_mapping.get(field_type)
-    
+
             if not expected_type:
                 continue
-    
-            invalid_records_df = df.filter(~col(field_name)
-                                           .cast(expected_type)
-                                           .isNotNull())
-            if invalid_records_df.count() > 0:
+
+            if field_name not in df.columns:
                 error_list.append({
                     "field_name": field_name,
-                    "error": f"Invalid data type for field '{field_name}'",
-                    "invalid_records": invalid_records_df.collect()
+                    "error": f"Field '{field_name}' not found in DataFrame"
                 })
-                df = df.subtract(invalid_records_df)
+                continue
+
+            try:
+                invalid_records_df = df.filter(~col(field_name)
+                                               .cast(expected_type).isNotNull())
+                if invalid_records_df.count() > 0:
+                    error_list.append({
+                        "field_name": field_name,
+                        "error": f"Invalid data type for field '{field_name}'",
+                        "invalid_records": invalid_records_df.collect()
+                    })
+                    df = df.subtract(invalid_records_df)
+            except (TypeError, ValueError) as e:
+                error_list.append({
+                    "field_name": field_name,
+                    "error": f"Error casting field '{field_name}': {str(e)}"
+                })
+
         return df, error_list
 
     @staticmethod
@@ -68,10 +79,9 @@ class DataValidator:
         """
         Validates primary keys in a DataFrame using the metadata DataFrame.
     
-        :param spark: SparkSession instance.
         :param df: DataFrame to validate.
         :param metadata_df: DataFrame containing metadata information.
-        :return: A tuple containing the DataFrame with valid data 
+        :return: A tuple containing the DataFrame with valid data
         and a list of errors.
         """
         primary_keys = (metadata_df.filter(col("key").isNotNull())
@@ -99,11 +109,9 @@ class DataValidator:
                     "fields": fields
                 })
     
-                # Eliminar registros duplicados del DataFrame válido
                 duplicate_keys = duplicate_df.select(fields).distinct()
                 df = df.join(duplicate_keys, fields, "left_anti")
     
-            # Verificar valores nulos
             for field in fields:
                 null_df = df.filter(col(field).isNull())
                 if null_df.count() > 0:
@@ -113,7 +121,6 @@ class DataValidator:
                         "fields": [field]
                     })
     
-                    # Eliminar registros con valores nulos del DataFrame válido
                     df = df.filter(col(field).isNotNull())
     
         return df, error_list

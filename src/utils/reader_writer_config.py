@@ -62,6 +62,9 @@ class Writer:
         :param table_path: Path to the Delta table.
         :param mode: Write mode (overwrite, append, etc.).
         :param partition_by: List of columns to partition the table by.
+        :return: None
+        :raises IOError: If the table cannot be written.
+        :raises ValueError: If the table path is invalid or if the mode is not supported.
         """
         try:
             writer = df.write.format("delta").mode(mode)

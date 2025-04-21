@@ -20,6 +20,7 @@ class LoggerConfig:
         
         :param log_file_path: Path to the log file.
         :param log_level: Logging level (default is INFO).
+        :return: Configured logger instance.
         """
         logger = logging.getLogger("ContosoLogger")
         logger.setLevel(log_level)
